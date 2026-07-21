@@ -59,8 +59,8 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrl + route)
       .check(status.is(200))
 
-  val postManagementDashboardPage: HttpRequestBuilder =
-    http("Post Management Dashboard Page")
+  val getManageYourRcaspsPage: HttpRequestBuilder =
+    http("Get Manage your Rcasps Page")
       .get(baseUrl + "/manage-your-rcasps")
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/organisation-or-individual").saveAs("OrgOrInd"))
@@ -79,5 +79,5 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/organisation-name").saveAs("OrganisationName"))
 
-  //TODO: Continue this journey - Login as RCASPisUser = false then add Organisation
+  // TODO: Continue this journey - Login as RCASPisUser = false then add Organisation
 }

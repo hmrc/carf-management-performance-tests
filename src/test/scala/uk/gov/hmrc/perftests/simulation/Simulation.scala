@@ -26,7 +26,7 @@ class Simulation extends PerformanceTestRunner {
     getAuthLoginPage,
     postAuthLoginPage,
     getManagementDashboardPage,
-    postManagementDashboardPage,
+    getManageYourRcaspsPage,
     getOrganisationOrIndividualPage,
     postOrganisationOrIndividualPage
     // TODO: Continue this journey - Login as RCASPisUser = false then add Organisation
