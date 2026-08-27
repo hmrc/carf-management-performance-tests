@@ -22,9 +22,28 @@ import uk.gov.hmrc.perftests.requests._
 
 class Simulation extends PerformanceTestRunner {
 
+  setup("OrgAutomatched", "Automatched Organisation RCASP is user add journey").withChainedActions(
+    getAuthLoginPage,
+    postAuthLoginPage("automatched"),
+    getManagementDashboardPage,
+    getManageYourRcaspsPage,
+    getReportForRegisteredBusinessPage,
+    postReportForRegisteredBusinessPage,
+    getIsThisYourBusinessNamePage,
+    postIsThisYourBusinessNamePage,
+    getHaveTradingNamePage,
+    postHaveTradingNamePage,
+    getIsTheAddressCorrectPage,
+    postIsTheAddressCorrectPage,
+    getEndOfJourneyPage,
+    getRegisteredBusinessCheckAnswersPage,
+    postRegisteredBusinessCheckAnswersPage,
+    getRcaspAddedPage
+  )
+
   setup("OrgNonAutoMatched", "Organisation Non Automatched").withChainedActions(
     getAuthLoginPage,
-    postAuthLoginPage,
+    postAuthLoginPage("otherOrg"),
     getManagementDashboardPage,
     getManageYourRcaspsPage,
     getOrganisationOrIndividualPage,
