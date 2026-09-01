@@ -196,13 +196,19 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val postOrganisationOrIndividualPage: HttpRequestBuilder =
+  def postOrganisationOrIndividualPage(affinityGroup: String): HttpRequestBuilder = {
+    val (formValue, locationPath, saveAsName) = affinityGroup match {
+      case "otherOrg" => ("Organisation", "/manage-your-rcasps/organisation-name", "OrganisationName")
+      case "individual"   => ("Individual", "/manage-your-rcasps/individual-name", "IndividualName")
+    }
+
     http("Post Organisation or Individual Page")
       .post(baseUrl + "/manage-your-rcasps/organisation-or-individual")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "Organisation")
+      .formParam("value", formValue)
       .check(status.is(303))
-      .check(header("Location").is("/manage-your-rcasps/organisation-name").saveAs("OrganisationName"))
+      .check(header("Location").is(locationPath).saveAs(saveAsName))
+  }
 
   val getOrganisationNamePage: HttpRequestBuilder =
     http("Get Organisation Name Page")
@@ -252,14 +258,24 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val postFindAddressPage: HttpRequestBuilder =
-    http("Post Find Address Page")
+  def postFindAddressPage(includePropertyNameOrNumber: Boolean): HttpRequestBuilder = {
+    val baseRequest = http("Post Find Address Page")
       .post(baseUrl + "#{FindAddress}")
       .formParam("csrfToken", "#{csrfToken}")
       .formParam("postcode", "LU1 5JP")
-      .formParam("propertyNameOrNumber", "7")
+
+    val requestWithExtraParams =
+      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "7")
+      else baseRequest
+
+    val (locationPath, saveAsName) =
+      if (includePropertyNameOrNumber) ("/manage-your-rcasps/review-address", "ReviewAddress")
+      else ("/manage-your-rcasps/choose-address", "ChooseAddress")
+
+    requestWithExtraParams
       .check(status.is(303))
-      .check(header("Location").is("/manage-your-rcasps/review-address").saveAs("ReviewAddress"))
+      .check(header("Location").is(locationPath).saveAs(saveAsName))
+  }
 
   val getReviewAddressPage: HttpRequestBuilder =
     http("Get Review Address Page")
@@ -395,5 +411,106 @@ object ManagementRequests extends ServicesConfiguration {
       .formParam("csrfToken", "#{csrfToken}")
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/rcasp-added").saveAs("RcaspAdded"))
+
+  val getIndividualNamePage: HttpRequestBuilder =
+    http("Get Individual Name Page")
+      .get(baseUrl + "#{IndividualName}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postIndividualNamePage: HttpRequestBuilder =
+    http("Post Individual Name Page")
+      .post(baseUrl + "#{IndividualName}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("firstName", "John")
+      .formParam("lastName", "Doe")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/ni-number").saveAs("NiNumber"))
+
+  val getNiNumberPage: HttpRequestBuilder =
+    http("Get Ni Number Page")
+      .get(baseUrl + "#{NiNumber}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postNiNumberPage: HttpRequestBuilder =
+    http("Post Ni Number Page")
+      .post(baseUrl + "#{NiNumber}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "AB123456C")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/find-address").saveAs("FindAddress"))
+
+  val getChooseAddressPage: HttpRequestBuilder =
+    http("Get Choose Address Page")
+      .get(baseUrl + "#{ChooseAddress}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChooseAddressPage: HttpRequestBuilder =
+    http("Post Choose Address Page")
+      .post(baseUrl + "#{ChooseAddress}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "none")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/address").saveAs("Address"))
+
+  val getAddressPage: HttpRequestBuilder =
+    http("Get Address Page")
+      .get(baseUrl + "#{Address}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postAddressPage: HttpRequestBuilder =
+    http("Post Address Page")
+      .post(baseUrl + "#{Address}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("addressLine1", "1 Test Street")
+      .formParam("townOrCity", "Test town")
+      .formParam("postcode", "AA1 1AA")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/individual-email").saveAs("IndividualEmail"))
+
+  val getIndividualEmailPage: HttpRequestBuilder =
+    http("Get Individual Email Page")
+      .get(baseUrl + "#{IndividualEmail}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postIndividualEmailPage: HttpRequestBuilder =
+    http("Post Individual Email Page")
+      .post(baseUrl + "#{IndividualEmail}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "John.doe@example.com")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/individual-have-phone").saveAs("IndividualHavePhone"))
+
+  val getIndividualHavePhonePage: HttpRequestBuilder =
+    http("Get Individual Have Phone Page")
+      .get(baseUrl + "#{IndividualHavePhone}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postIndividualHavePhonePage: HttpRequestBuilder =
+    http("Post Individual Have Phone Page")
+      .post(baseUrl + "#{IndividualHavePhone}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/individual-phone").saveAs("IndividualPhone"))
+
+  val getIndividualPhonePage: HttpRequestBuilder =
+    http("Get Individual Phone Page")
+      .get(baseUrl + "#{IndividualPhone}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postIndividualPhonePage: HttpRequestBuilder =
+    http("Post Individual Phone Page")
+      .post(baseUrl + "#{IndividualPhone}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "1234567890")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/end-of-journey").saveAs("EndOfJourney"))
 
 }

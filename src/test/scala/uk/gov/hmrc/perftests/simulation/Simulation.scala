@@ -41,13 +41,13 @@ class Simulation extends PerformanceTestRunner {
     getRcaspAddedPage
   )
 
-  setup("OrgNonAutoMatched", "Organisation Non Automatched").withChainedActions(
+  setup("OrgNonAutoMatched", "Organisation Non Automatched add RCASP journey").withChainedActions(
     getAuthLoginPage,
     postAuthLoginPage("otherOrg"),
     getManagementDashboardPage,
     getManageYourRcaspsPage,
     getOrganisationOrIndividualPage,
-    postOrganisationOrIndividualPage,
+    postOrganisationOrIndividualPage("otherOrg"),
     getOrganisationNamePage,
     postOrganisationNamePage,
     getHaveTradingNamePage,
@@ -57,7 +57,7 @@ class Simulation extends PerformanceTestRunner {
     getUtrPage,
     postUtrPage,
     getFindAddressPage,
-    postFindAddressPage,
+    postFindAddressPage(true),
     getReviewAddressPage,
     getReviewAddressSubmitPage,
     getContactNamePage,
@@ -76,6 +76,35 @@ class Simulation extends PerformanceTestRunner {
     postSecondContactHavePhonePage,
     getSecondContactPhonePage,
     postSecondContactPhonePage,
+    getEndOfJourneyPage,
+    getCheckAnswersPage,
+    postCheckAnswersPage,
+    getRcaspAddedPage
+  )
+
+  setup("Individual", "Individual add RCASP journey").withChainedActions(
+    getAuthLoginPage,
+    postAuthLoginPage("individual"),
+    getManagementDashboardPage,
+    getManageYourRcaspsPage,
+    getOrganisationOrIndividualPage,
+    postOrganisationOrIndividualPage("individual"),
+    getIndividualNamePage,
+    postIndividualNamePage,
+    getNiNumberPage,
+    postNiNumberPage,
+    getFindAddressPage,
+    postFindAddressPage(false),
+    getChooseAddressPage,
+    postChooseAddressPage,
+    getAddressPage,
+    postAddressPage,
+    getIndividualEmailPage,
+    postIndividualEmailPage,
+    getIndividualHavePhonePage,
+    postIndividualHavePhonePage,
+    getIndividualPhonePage,
+    postIndividualPhonePage,
     getEndOfJourneyPage,
     getCheckAnswersPage,
     postCheckAnswersPage,
