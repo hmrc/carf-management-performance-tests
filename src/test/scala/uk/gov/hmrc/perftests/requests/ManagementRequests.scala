@@ -138,13 +138,20 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val postHaveTradingNamePage: HttpRequestBuilder =
+  def postHaveTradingNamePage(orgType: String, value: String): HttpRequestBuilder = {
+    val (location, saveAsKey) = (orgType, value) match {
+      case (_, "true")               => ("/manage-your-rcasps/trading-name", "TradingName")
+      case ("automatched", "false")  => ("/manage-your-rcasps/registered-business/is-the-address-correct", "IsTheAddressCorrect")
+      case ("otherOrg", "false")     => ("/manage-your-rcasps/utr", "Utr")
+    }
+
     http("Post Have Trading Name Page")
       .post(baseUrl + "#{HaveTradingName}")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "false")
+      .formParam("value", value)
       .check(status.is(303))
-      .check(header("Location").is("/manage-your-rcasps/registered-business/is-the-address-correct").saveAs("IsTheAddressCorrect"))
+      .check(header("Location").is(location).saveAs(saveAsKey))
+  }
 
   val getIsTheAddressCorrectPage: HttpRequestBuilder =
     http("Get Is The Address Correct Page")
@@ -197,5 +204,196 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/organisation-name").saveAs("OrganisationName"))
 
-  // TODO: Continue this journey - Login as RCASPisUser = false then add Organisation
+  val getOrganisationNamePage: HttpRequestBuilder =
+    http("Get Organisation Name Page")
+      .get(baseUrl + "#{OrganisationName}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postOrganisationNamePage: HttpRequestBuilder =
+    http("Post Organisation Name Page")
+      .post(baseUrl + "#{OrganisationName}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "Test Org Ltd")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/have-trading-name").saveAs("HaveTradingName"))
+
+  val getTradingNamePage: HttpRequestBuilder =
+    http("Get Trading Name Page")
+      .get(baseUrl + "#{TradingName}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postTradingNamePage: HttpRequestBuilder =
+    http("Post Trading Name Page")
+      .post(baseUrl + "#{TradingName}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "Test Organisation Limited")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/utr").saveAs("Utr"))
+
+  val getUtrPage: HttpRequestBuilder =
+    http("Get Utr Page")
+      .get(baseUrl + "#{Utr}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postUtrPage: HttpRequestBuilder =
+    http("Post Utr Page")
+      .post(baseUrl + "#{Utr}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "1234567890")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/find-address").saveAs("FindAddress"))
+
+  val getFindAddressPage: HttpRequestBuilder =
+    http("Get Find Address Page")
+      .get(baseUrl + "#{FindAddress}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postFindAddressPage: HttpRequestBuilder =
+    http("Post Find Address Page")
+      .post(baseUrl + "#{FindAddress}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("postcode", "LU1 5JP")
+      .formParam("propertyNameOrNumber", "7")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/review-address").saveAs("ReviewAddress"))
+
+  val getReviewAddressPage: HttpRequestBuilder =
+    http("Get Review Address Page")
+      .get(baseUrl + "#{ReviewAddress}")
+      .check(status.is(200))
+
+  val getReviewAddressSubmitPage: HttpRequestBuilder =
+    http("Get Review Address Submit Page")
+      .get(baseUrl + "/manage-your-rcasps/review-address-submit")
+      .check(status.is(303))
+
+  val getContactNamePage: HttpRequestBuilder =
+    http("Get Contact Name Page")
+      .get(baseUrl + "/manage-your-rcasps/contact-name")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postContactNamePage: HttpRequestBuilder =
+    http("Post Contact Name Page")
+      .post(baseUrl + "/manage-your-rcasps/contact-name")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "John Doe")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/email").saveAs("Email"))
+
+  val getEmailPage: HttpRequestBuilder =
+    http("Get Email Page")
+      .get(baseUrl + "#{Email}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postEmailPage: HttpRequestBuilder =
+    http("Post Email Page")
+      .post(baseUrl + "#{Email}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "John.Doe@test.com")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/have-phone").saveAs("HavePhone"))
+
+  val getHavePhonePage: HttpRequestBuilder =
+    http("Get Have Phone Page")
+      .get(baseUrl + "#{HavePhone}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postHavePhonePage: HttpRequestBuilder =
+    http("Post Have Phone Page")
+      .post(baseUrl + "#{HavePhone}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "false")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/have-second-contact").saveAs("HaveSecondContact"))
+
+  val getHaveSecondContactPage: HttpRequestBuilder =
+    http("Get Have Second Contact Page")
+      .get(baseUrl + "#{HaveSecondContact}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postHaveSecondContactPage: HttpRequestBuilder =
+    http("Post Have Second Contact Page")
+      .post(baseUrl + "#{HaveSecondContact}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/second-contact-name").saveAs("SecondContactName"))
+
+  val getSecondContactNamePage: HttpRequestBuilder =
+    http("Get Second Contact Name Page")
+      .get(baseUrl + "#{SecondContactName}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postSecondContactNamePage: HttpRequestBuilder =
+    http("Post Second Contact Name Page")
+      .post(baseUrl + "#{SecondContactName}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "Jane Smith")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/second-contact-email").saveAs("SecondContactEmail"))
+
+  val getSecondContactEmailPage: HttpRequestBuilder =
+    http("Get Second Contact Email Page")
+      .get(baseUrl + "#{SecondContactEmail}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postSecondContactEmailPage: HttpRequestBuilder =
+    http("Post Second Contact Email Page")
+      .post(baseUrl + "#{SecondContactEmail}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "jane.smith@test.com")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/second-contact-have-phone").saveAs("SecondContactHavePhone"))
+
+  val getSecondContactHavePhonePage: HttpRequestBuilder =
+    http("Get Second Contact Have Phone Page")
+      .get(baseUrl + "#{SecondContactHavePhone}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postSecondContactHavePhonePage: HttpRequestBuilder =
+    http("Post Second Contact Have Phone Page")
+      .post(baseUrl + "#{SecondContactHavePhone}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/second-contact-phone").saveAs("SecondContactPhone"))
+
+  val getSecondContactPhonePage: HttpRequestBuilder =
+    http("Get Second Contact Phone Page")
+      .get(baseUrl + "#{SecondContactPhone}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postSecondContactPhonePage: HttpRequestBuilder =
+    http("Post Second Contact Phone Page")
+      .post(baseUrl + "#{SecondContactPhone}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "1234567890")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/end-of-journey").saveAs("EndOfJourney"))
+
+  val getCheckAnswersPage: HttpRequestBuilder =
+    http("Get Check Answers Page")
+      .get(baseUrl + "/manage-your-rcasps/check-answers")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postCheckAnswersPage: HttpRequestBuilder =
+    http("Post Check Answers Page")
+      .post(baseUrl + "/manage-your-rcasps/check-answers")
+      .formParam("csrfToken", "#{csrfToken}")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/rcasp-added").saveAs("RcaspAdded"))
+
 }
