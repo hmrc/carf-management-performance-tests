@@ -513,4 +513,56 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/end-of-journey").saveAs("EndOfJourney"))
 
+  val getYourRcaspsPage: HttpRequestBuilder =
+    http("Get Your Rcasps Page")
+      .get(baseUrl + "/manage-your-rcasps/your-rcasps")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val getAmazonRemoveUserAccessPage: HttpRequestBuilder =
+    http("Get Remove User Access Page")
+      .get(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postAmazonRemoveUserAccessPage: HttpRequestBuilder =
+    http("Post Remove User Access Page")
+      .post(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "false")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/remove/other-access").saveAs("OtherAccess"))
+
+  val getRemoveOtherAccessPage: HttpRequestBuilder =
+    http("Get Remove Other Access Page")
+      .get(baseUrl + "#{OtherAccess}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRemoveOtherAccessPage: HttpRequestBuilder =
+    http("Post Remove Other Access Page")
+      .post(baseUrl + "#{OtherAccess}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "false")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/remove/remove-rcasp").saveAs("RemoveRCASP"))
+
+  val getRemoveRCASPPage: HttpRequestBuilder =
+    http("Get Remove RCASP Page")
+      .get(baseUrl + "#{RemoveRCASP}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRemoveRCASPPage: HttpRequestBuilder =
+    http("Post Remove RCASP Page")
+      .post(baseUrl + "#{RemoveRCASP}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/remove/rcasp-removed").saveAs("RCASPRemoved"))
+
+  val getRCASPRemovedPage: HttpRequestBuilder =
+    http("Get RCASP Removed Page")
+      .get(baseUrl + "#{RCASPRemoved}")
+      .check(status.is(200))
 }

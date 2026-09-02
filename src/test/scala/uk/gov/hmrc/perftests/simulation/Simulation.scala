@@ -111,5 +111,19 @@ class Simulation extends PerformanceTestRunner {
     getRcaspAddedPage
   )
 
+  setup("RemoveRCASP", "Remove RCASP journey").withChainedActions(
+    getAuthLoginPage,
+    postAuthLoginPage("otherOrg"),
+    getManagementDashboardPage,
+    getYourRcaspsPage,
+    getAmazonRemoveUserAccessPage,
+    postAmazonRemoveUserAccessPage,
+    getRemoveOtherAccessPage,
+    postRemoveOtherAccessPage,
+    getRemoveRCASPPage,
+    postRemoveRCASPPage,
+    getRCASPRemovedPage
+  )
+
   runSimulation()
 }
