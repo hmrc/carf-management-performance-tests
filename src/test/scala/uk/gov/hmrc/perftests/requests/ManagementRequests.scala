@@ -547,12 +547,12 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
 
   val getRCASPIsUserChangePage: HttpRequestBuilder =
-    http("Get RCASP is user Change Page")
+    http("Get Registered Business Change Page")
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456787")
       .check(status.is(303))
 
   val getAmazonChangePage: HttpRequestBuilder =
-    http("Get RCASP Change Page")
+    http("Get Amazon Change Page")
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456788")
       .check(status.is(303))
 
@@ -562,9 +562,16 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
 
   val getAmazonChangeAnswersPage: HttpRequestBuilder =
-    http("Get RCASP Change Answers Page")
+    http("Get Amazon Change Answers Page")
       .get(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
       .check(status.is(200))
+
+  val postAmazonChangeAnswersPagee: HttpRequestBuilder =
+    http("Post Amazon Change Answers Page")
+      .post(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
+      .formParam("csrfToken", "#{csrfToken}")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/details-updated").saveAs("DetailsUpdated"))
 
   val getRegisteredBusinessChangeIsTheAddressCorrectPage: HttpRequestBuilder =
     http("Get Registered Business Change Is The Address Correct Page")
@@ -624,7 +631,7 @@ object ManagementRequests extends ServicesConfiguration {
 
   val getDetailsUpdatedPage: HttpRequestBuilder =
     http("Get Details Updated Page")
-      .get(baseUrl + "/manage-your-rcasps/details-updated")
+      .get(baseUrl + "#{DetailsUpdated}")
       .check(status.is(200))
 
   val getChangeHavePhonePage: HttpRequestBuilder =

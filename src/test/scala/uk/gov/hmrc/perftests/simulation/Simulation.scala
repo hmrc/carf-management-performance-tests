@@ -171,6 +171,7 @@ class Simulation extends PerformanceTestRunner {
     getEndOfJourneyPage,
     getAmazonChangePage,
     getAmazonChangeAnswersPage,
+    postAmazonChangeAnswersPagee,
     getDetailsUpdatedPage
   )
 
