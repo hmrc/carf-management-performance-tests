@@ -24,7 +24,7 @@ class Simulation extends PerformanceTestRunner {
 
   setup("OrgAutomatched", "Automatched Organisation RCASP is user add journey").withChainedActions(
     getAuthLoginPage,
-    postAuthLoginPage("automatched"),
+    postAuthLoginPage("automatched", "RK1111"),
     getManagementDashboardPage,
     getManageYourRcaspsPage,
     getReportForRegisteredBusinessPage,
@@ -43,7 +43,7 @@ class Simulation extends PerformanceTestRunner {
 
   setup("OrgNonAutoMatched", "Organisation Non Automatched add RCASP journey").withChainedActions(
     getAuthLoginPage,
-    postAuthLoginPage("otherOrg"),
+    postAuthLoginPage("otherOrg", "RN1111"),
     getManagementDashboardPage,
     getManageYourRcaspsPage,
     getOrganisationOrIndividualPage,
@@ -84,7 +84,7 @@ class Simulation extends PerformanceTestRunner {
 
   setup("Individual", "Individual add RCASP journey").withChainedActions(
     getAuthLoginPage,
-    postAuthLoginPage("individual"),
+    postAuthLoginPage("individual", "LJ1111"),
     getManagementDashboardPage,
     getManageYourRcaspsPage,
     getOrganisationOrIndividualPage,
@@ -113,7 +113,7 @@ class Simulation extends PerformanceTestRunner {
 
   setup("RemoveRCASP", "Remove RCASP journey").withChainedActions(
     getAuthLoginPage,
-    postAuthLoginPage("otherOrg"),
+    postAuthLoginPage("otherOrg", "RN1111"),
     getManagementDashboardPage,
     getYourRcaspsPage,
     getAmazonRemoveUserAccessPage,
@@ -123,6 +123,55 @@ class Simulation extends PerformanceTestRunner {
     getRemoveRCASPPage,
     postRemoveRCASPPage,
     getRCASPRemovedPage
+  )
+
+  setup("ChangeRCASPisUser", "Change RCASP is user journey").withChainedActions(
+    getAuthLoginPage,
+    postAuthLoginPage("automatched", "RN1111"),
+    getManagementDashboardPage,
+    getYourRcaspsPage,
+    getRCASPIsUserChangePage,
+    getRegisteredBusinessChangeAnswersPage,
+    getRegisteredBusinessChangeIsTheAddressCorrectPage,
+    postRegisteredBusinessChangeIsTheAddressCorrectPage,
+    getChangeFindAddressPage,
+    postChangeFindAddressPage(true),
+    getChangeReviewAddressPage,
+    getChangeReviewAddressSubmitPage,
+    getEndOfJourneyPage,
+    getRCASPIsUserChangePage,
+    getRegisteredBusinessChangeAnswersPage,
+    postRegisteredBusinessChangeAnswersPage,
+    getDetailsUpdatedPage
+  )
+
+  setup("ChangeRCASP", "Change RCASP is user journey").withChainedActions(
+    getAuthLoginPage,
+    postAuthLoginPage("otherOrg", "RN1111"),
+    getManagementDashboardPage,
+    getYourRcaspsPage,
+    getAmazonChangePage,
+    getAmazonChangeAnswersPage,
+    getChangeHavePhonePage,
+    postChangeHavePhonePage,
+    getChangePhonePage,
+    postChangePhonePage,
+    getEndOfJourneyPage,
+    getAmazonChangePage,
+    getAmazonChangeAnswersPage,
+    getChangeHaveSecondContactPage,
+    postChangeHaveSecondContactPage,
+    getSecondContactNamePage,
+    postSecondContactNamePage,getSecondContactEmailPage,
+    postSecondContactEmailPage,
+    getSecondContactHavePhonePage,
+    postSecondContactHavePhonePage,
+    getSecondContactPhonePage,
+    postSecondContactPhonePage,
+    getEndOfJourneyPage,
+    getAmazonChangePage,
+    getAmazonChangeAnswersPage,
+    getDetailsUpdatedPage
   )
 
   runSimulation()

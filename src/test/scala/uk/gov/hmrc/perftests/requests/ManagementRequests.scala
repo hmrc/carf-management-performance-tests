@@ -35,7 +35,7 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrlAuth + "/auth-login-stub/gg-sign-in")
       .check(status.is(200))
 
-  def postAuthLoginPage(userType: String): HttpRequestBuilder = {
+  def postAuthLoginPage(userType: String, CARFID: String): HttpRequestBuilder = {
     val (requestName, affinityGroup) = userType match {
       case "automatched" => ("Post Auth login page for Auto matched Org", "Organisation")
       case "otherOrg" => ("Post Auth login page for Non Auto matched Org", "Organisation")
@@ -54,39 +54,19 @@ object ManagementRequests extends ServicesConfiguration {
       .formParam("email", "user@test.com")
       .formParam("affinityGroup", affinityGroup)
       .formParam("redirectionUrl", baseUrl + route)
+      .formParam("enrolment[0].name", "HMRC-CARF-ORG")
+      .formParam("enrolment[0].taxIdentifier[0].name", "CARFID")
+      .formParam("enrolment[0].taxIdentifier[0].value", CARFID)
+      .formParam("enrolment[0].state", "Activated")
 
-    val finalRequest = userType match {
-      case "automatched" =>
-        baseRequest
-          .formParam("enrolment[0].name", "HMRC-CARF-ORG")
-          .formParam("enrolment[0].taxIdentifier[0].name", "CARFID")
-          .formParam("enrolment[0].taxIdentifier[0].value", "RK1111")
-          .formParam("enrolment[0].state", "Activated")
-          .formParam("enrolment[4].name", "IR-CT")
-          .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
-          .formParam("enrolment[4].taxIdentifier[0].value", "12345")
-          .formParam("enrolment[4].state", "Activated")
-
-      case "otherOrg" =>
-        baseRequest
-          .formParam("enrolment[0].name", "HMRC-CARF-ORG")
-          .formParam("enrolment[0].taxIdentifier[0].name", "CARFID")
-          .formParam("enrolment[0].taxIdentifier[0].value", "RN1111")
-          .formParam("enrolment[0].state", "Activated")
-
-      case "individual" =>
-        baseRequest
-          .formParam("enrolment[0].name", "HMRC-CARF-ORG")
-          .formParam("enrolment[0].taxIdentifier[0].name", "CARFID")
-          .formParam("enrolment[0].taxIdentifier[0].value", "LJ1111")
-          .formParam("enrolment[0].state", "Activated")
-
-      case _ =>
-        baseRequest
-          .formParam("enrolment[0].name", "HMRC-CARF-ORG")
-          .formParam("enrolment[0].taxIdentifier[0].name", "CARFID")
-          .formParam("enrolment[0].taxIdentifier[0].value", "LJ1111")
-          .formParam("enrolment[0].state", "Activated")
+    val finalRequest = if(userType == "automatched") {
+      baseRequest
+        .formParam("enrolment[4].name", "IR-CT")
+        .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
+        .formParam("enrolment[4].taxIdentifier[0].value", "12345")
+        .formParam("enrolment[4].state", "Activated")
+    } else {
+      baseRequest
     }
 
     finalRequest
@@ -565,4 +545,127 @@ object ManagementRequests extends ServicesConfiguration {
     http("Get RCASP Removed Page")
       .get(baseUrl + "#{RCASPRemoved}")
       .check(status.is(200))
+
+  val getRCASPIsUserChangePage: HttpRequestBuilder =
+    http("Get RCASP Change Page")
+      .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456787")
+      .check(status.is(303))
+
+  val getAmazonChangePage: HttpRequestBuilder =
+    http("Get RCASP Change Page")
+      .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456788")
+      .check(status.is(303))
+
+  val getRegisteredBusinessChangeAnswersPage: HttpRequestBuilder =
+    http("Get Registered Business Change Answers Page")
+      .get(baseUrl + "/manage-your-rcasps/registered-business/change-answers/ZMCAR0123456787")
+      .check(status.is(200))
+
+  val getAmazonChangeAnswersPage: HttpRequestBuilder =
+    http("Get RCASP Change Answers Page")
+      .get(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
+      .check(status.is(200))
+
+  val getRegisteredBusinessChangeIsTheAddressCorrectPage: HttpRequestBuilder =
+    http("Get Registered Business Change Is The Address Correct Page")
+      .get(baseUrl + "/manage-your-rcasps/registered-business/change-is-the-address-correct")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRegisteredBusinessChangeIsTheAddressCorrectPage: HttpRequestBuilder =
+    http("Post Registered Business Change Is The Address Correct Page")
+      .post(baseUrl + "/manage-your-rcasps/registered-business/change-is-the-address-correct")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "false")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/change-find-address").saveAs("ChangeFindAddress"))
+
+  val getChangeFindAddressPage: HttpRequestBuilder =
+    http("Get Change Find Address Page")
+      .get(baseUrl + "#{ChangeFindAddress}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  def postChangeFindAddressPage(includePropertyNameOrNumber: Boolean): HttpRequestBuilder = {
+    val baseRequest = http("Post Change Find Address Page")
+      .post(baseUrl + "#{ChangeFindAddress}")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("postcode", "LU1 5JP")
+
+    val requestWithExtraParams =
+      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "7")
+      else baseRequest
+
+    val (locationPath, saveAsName) =
+      if (includePropertyNameOrNumber) ("/manage-your-rcasps/change-review-address", "ChangeReviewAddress")
+      else ("/manage-your-rcasps/change-choose-address", "ChangeChooseAddress")
+
+    requestWithExtraParams
+      .check(status.is(303))
+      .check(header("Location").is(locationPath).saveAs(saveAsName))
+  }
+
+  val getChangeReviewAddressPage: HttpRequestBuilder =
+    http("Get Change Review Address Page")
+      .get(baseUrl + "#{ChangeReviewAddress}")
+      .check(status.is(200))
+
+  val getChangeReviewAddressSubmitPage: HttpRequestBuilder =
+    http("Get Change Review Address Submit Page")
+      .get(baseUrl + "/manage-your-rcasps/change-review-address-submit")
+      .check(status.is(303))
+
+  val postRegisteredBusinessChangeAnswersPage: HttpRequestBuilder =
+    http("Post Registered Business Change Answers Page")
+      .post(baseUrl + "/registered-business/change-answers/ZMCAR0123456787")
+      .formParam("csrfToken", "#{csrfToken}")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/details-updated").saveAs("DetailsUpdated"))
+
+  val getDetailsUpdatedPage: HttpRequestBuilder =
+    http("Get Details Updated Page")
+      .get(baseUrl + "/manage-your-rcasps/details-updated")
+      .check(status.is(200))
+
+  val getChangeHavePhonePage: HttpRequestBuilder =
+    http("Get Change Have Phone Page")
+      .get(baseUrl + "/manage-your-rcasps/change-have-phone")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeHavePhonePage: HttpRequestBuilder =
+    http("Post Change Have Phone Page")
+      .post(baseUrl + "/manage-your-rcasps/change-have-phone")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/change-phone").saveAs("ChangePhone"))
+
+  val getChangePhonePage: HttpRequestBuilder =
+    http("Get Change Phone Page")
+      .get(baseUrl + "/manage-your-rcasps/change-phone")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangePhonePage: HttpRequestBuilder =
+    http("Post Change Phone Page")
+      .post(baseUrl + "/manage-your-rcasps/change-phone")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "1234567890")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/end-of-journey").saveAs("EndOfJourney"))
+
+  val getChangeHaveSecondContactPage: HttpRequestBuilder =
+    http("Get Change Have Second Contact Page")
+      .get(baseUrl + "/manage-your-rcasps/change-have-second-contact")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeHaveSecondContactPage: HttpRequestBuilder =
+    http("Post Change Have Second Contact Page")
+      .post(baseUrl + "/manage-your-rcasps/change-have-second-contact")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").is("/manage-your-rcasps/second-contact-name").saveAs("SecondContactName"))
 }
