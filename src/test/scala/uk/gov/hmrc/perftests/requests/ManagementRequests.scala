@@ -149,7 +149,7 @@ object ManagementRequests extends ServicesConfiguration {
 
   val getEndOfJourneyPage: HttpRequestBuilder =
     http("Get End Of Journey Page")
-      .get(baseUrl + "#{EndOfJourney}")
+      .get(baseUrl + "/manage-your-rcasps/end-of-journey")
       .check(status.is(303))
 
   val getRegisteredBusinessCheckAnswersPage: HttpRequestBuilder =
