@@ -145,7 +145,7 @@ class Simulation extends PerformanceTestRunner {
     getDetailsUpdatedPage
   )
 
-  setup("ChangeRCASP", "Change RCASP is user journey").withChainedActions(
+  setup("ChangeRCASP", "Change RCASP journey").withChainedActions(
     getAuthLoginPage,
     postAuthLoginPage("otherOrg", "RN1111"),
     getManagementDashboardPage,
@@ -171,6 +171,7 @@ class Simulation extends PerformanceTestRunner {
     getEndOfJourneyPage,
     getAmazonChangePage,
     getAmazonChangeAnswersPage,
+    postAmazonChangeAnswersPagee,
     getDetailsUpdatedPage
   )
 
