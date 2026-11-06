@@ -447,7 +447,7 @@ object ManagementRequests extends ServicesConfiguration {
       .formParam("csrfToken", "#{csrfToken}")
       .formParam("addressLine1", "1 Test Street")
       .formParam("townOrCity", "Test town")
-      .formParam("postcode", "AA1 1AA")
+      .formParam("postcode", "LU1 5JP")
       .check(status.is(303))
       .check(header("Location").is("/manage-your-rcasps/individual-email").saveAs("IndividualEmail"))
 
