@@ -38,9 +38,9 @@ object ManagementRequests extends ServicesConfiguration {
   def postAuthLoginPage(userType: String, CARFID: String): HttpRequestBuilder = {
     val (requestName, affinityGroup) = userType match {
       case "automatched" => ("Post Auth login page for Auto matched Org", "Organisation")
-      case "otherOrg" => ("Post Auth login page for Non Auto matched Org", "Organisation")
-      case "individual" => ("Post Auth login page", "Individual")
-      case _ => ("Post Auth login page", "Individual")
+      case "otherOrg"    => ("Post Auth login page for Non Auto matched Org", "Organisation")
+      case "individual"  => ("Post Auth login page", "Individual")
+      case _             => ("Post Auth login page", "Individual")
     }
 
     val baseRequest = http(requestName)
@@ -59,7 +59,7 @@ object ManagementRequests extends ServicesConfiguration {
       .formParam("enrolment[0].taxIdentifier[0].value", CARFID)
       .formParam("enrolment[0].state", "Activated")
 
-    val finalRequest = if(userType == "automatched") {
+    val finalRequest = if (userType == "automatched") {
       baseRequest
         .formParam("enrolment[4].name", "IR-CT")
         .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
@@ -96,7 +96,11 @@ object ManagementRequests extends ServicesConfiguration {
       .formParam("csrfToken", "#{csrfToken}")
       .formParam("value", "true")
       .check(status.is(303))
-      .check(header("Location").is("/manage-your-rcasps/registered-business/is-this-your-business-name").saveAs("IsThisYourBusinessName"))
+      .check(
+        header("Location")
+          .is("/manage-your-rcasps/registered-business/is-this-your-business-name")
+          .saveAs("IsThisYourBusinessName")
+      )
 
   val getIsThisYourBusinessNamePage: HttpRequestBuilder =
     http("Get Is This Your Business Name Page")
@@ -120,9 +124,10 @@ object ManagementRequests extends ServicesConfiguration {
 
   def postHaveTradingNamePage(orgType: String, value: String): HttpRequestBuilder = {
     val (location, saveAsKey) = (orgType, value) match {
-      case (_, "true")               => ("/manage-your-rcasps/trading-name", "TradingName")
-      case ("automatched", "false")  => ("/manage-your-rcasps/registered-business/is-the-address-correct", "IsTheAddressCorrect")
-      case ("otherOrg", "false")     => ("/manage-your-rcasps/utr", "Utr")
+      case (_, "true")              => ("/manage-your-rcasps/trading-name", "TradingName")
+      case ("automatched", "false") =>
+        ("/manage-your-rcasps/registered-business/is-the-address-correct", "IsTheAddressCorrect")
+      case ("otherOrg", "false")    => ("/manage-your-rcasps/utr", "Utr")
     }
 
     http("Post Have Trading Name Page")
@@ -178,8 +183,8 @@ object ManagementRequests extends ServicesConfiguration {
 
   def postOrganisationOrIndividualPage(affinityGroup: String): HttpRequestBuilder = {
     val (formValue, locationPath, saveAsName) = affinityGroup match {
-      case "otherOrg" => ("Organisation", "/manage-your-rcasps/organisation-name", "OrganisationName")
-      case "individual"   => ("Individual", "/manage-your-rcasps/individual-name", "IndividualName")
+      case "otherOrg"   => ("Organisation", "/manage-your-rcasps/organisation-name", "OrganisationName")
+      case "individual" => ("Individual", "/manage-your-rcasps/individual-name", "IndividualName")
     }
 
     http("Post Organisation or Individual Page")
@@ -499,13 +504,13 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val getAmazonRemoveUserAccessPage: HttpRequestBuilder =
+  val getRemoveUserAccessPage: HttpRequestBuilder =
     http("Get Remove User Access Page")
       .get(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val postAmazonRemoveUserAccessPage: HttpRequestBuilder =
+  val postRemoveUserAccessPage: HttpRequestBuilder =
     http("Post Remove User Access Page")
       .post(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
       .formParam("csrfToken", "#{csrfToken}")
@@ -551,8 +556,8 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456787")
       .check(status.is(303))
 
-  val getAmazonChangePage: HttpRequestBuilder =
-    http("Get Amazon Change Page")
+  val getChangePage: HttpRequestBuilder =
+    http("Get Change Page")
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456788")
       .check(status.is(303))
 
@@ -561,13 +566,13 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrl + "/manage-your-rcasps/registered-business/change-answers/ZMCAR0123456787")
       .check(status.is(200))
 
-  val getAmazonChangeAnswersPage: HttpRequestBuilder =
-    http("Get Amazon Change Answers Page")
+  val getChangeAnswersPage: HttpRequestBuilder =
+    http("Get Change Answers Page")
       .get(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
       .check(status.is(200))
 
-  val postAmazonChangeAnswersPagee: HttpRequestBuilder =
-    http("Post Amazon Change Answers Page")
+  val postChangeAnswersPage: HttpRequestBuilder =
+    http("Post Change Answers Page")
       .post(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
       .formParam("csrfToken", "#{csrfToken}")
       .check(status.is(303))
