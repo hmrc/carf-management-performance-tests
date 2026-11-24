@@ -499,13 +499,13 @@ object ManagementRequests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val getAmazonRemoveUserAccessPage: HttpRequestBuilder =
+  val getRemoveUserAccessPage: HttpRequestBuilder =
     http("Get Remove User Access Page")
       .get(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-  val postAmazonRemoveUserAccessPage: HttpRequestBuilder =
+  val postRemoveUserAccessPage: HttpRequestBuilder =
     http("Post Remove User Access Page")
       .post(baseUrl + "/manage-your-rcasps/remove/user-access/ZMCAR0123456788")
       .formParam("csrfToken", "#{csrfToken}")
@@ -551,8 +551,8 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456787")
       .check(status.is(303))
 
-  val getAmazonChangePage: HttpRequestBuilder =
-    http("Get Amazon Change Page")
+  val getChangePage: HttpRequestBuilder =
+    http("Get Change Page")
       .get(baseUrl + "/manage-your-rcasps/change/ZMCAR0123456788")
       .check(status.is(303))
 
@@ -561,13 +561,13 @@ object ManagementRequests extends ServicesConfiguration {
       .get(baseUrl + "/manage-your-rcasps/registered-business/change-answers/ZMCAR0123456787")
       .check(status.is(200))
 
-  val getAmazonChangeAnswersPage: HttpRequestBuilder =
-    http("Get Amazon Change Answers Page")
+  val getChangeAnswersPage: HttpRequestBuilder =
+    http("Get Change Answers Page")
       .get(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
       .check(status.is(200))
 
-  val postAmazonChangeAnswersPagee: HttpRequestBuilder =
-    http("Post Amazon Change Answers Page")
+  val postChangeAnswersPage: HttpRequestBuilder =
+    http("Post Change Answers Page")
       .post(baseUrl + "/manage-your-rcasps/change-answers/ZMCAR0123456788")
       .formParam("csrfToken", "#{csrfToken}")
       .check(status.is(303))
@@ -597,10 +597,10 @@ object ManagementRequests extends ServicesConfiguration {
     val baseRequest = http("Post Change Find Address Page")
       .post(baseUrl + "#{ChangeFindAddress}")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("postcode", "LU1 5JP")
+      .formParam("postcode", "ZZ011ZZ")
 
     val requestWithExtraParams =
-      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "7")
+      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "3")
       else baseRequest
 
     val (locationPath, saveAsName) =
