@@ -242,10 +242,10 @@ object ManagementRequests extends ServicesConfiguration {
     val baseRequest = http("Post Find Address Page")
       .post(baseUrl + "#{FindAddress}")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("postcode", "ZZ011ZZ")
+      .formParam("postcode", "LU1 5JP")
 
     val requestWithExtraParams =
-      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "3")
+      if (includePropertyNameOrNumber) baseRequest.formParam("propertyNameOrNumber", "7")
       else baseRequest
 
     val (locationPath, saveAsName) =
